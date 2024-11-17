@@ -1,0 +1,12 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<testsuite name="SampleTest" tests="2" skipped="0" failures="0" errors="0" timestamp="2024-11-17T15:36:20" hostname="MSI" time="15.382">
+  <properties/>
+  <testcase name="testUserInputChangesTextInNewActivity()" classname="SampleTest" time="8.56"/>
+  <testcase name="testEmptyOrSpaceInputDoesNotChangeOutput()" classname="SampleTest" time="6.821"/>
+  <system-out><![CDATA[]]></system-out>
+  <system-err><![CDATA[нояб. 17, 2024 6:36:24 PM io.appium.java_client.remote.AppiumCommandExecutor$1 lambda$0
+INFO: Detected dialect: W3C
+нояб. 17, 2024 6:36:33 PM io.appium.java_client.remote.AppiumCommandExecutor$1 lambda$0
+INFO: Detected dialect: W3C
+]]></system-err>
+</testsuite>
