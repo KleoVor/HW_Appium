@@ -16,12 +16,13 @@ import static org.junit.jupiter.api.Assertions.assertEquals;
 public class SampleTest {
 
     private AndroidDriver<MobileElement> driver;
+    private MobileObject mobileObject;
+
     private static final String BASE_URL = "http://127.0.0.1:4723";
     private static final String PACKAGE_NAME = "ru.netology.testing.uiautomator";
 
-    // Переменные для тестов
-    private static final String EMPTY_INPUT = "     "; // Пустая строка для ввода только пробелов
-    private static final String VALID_INPUT = "2test"; // Корректный текст для ввода
+    private static final String EMPTY_INPUT = "     ";
+    private static final String VALID_INPUT = "2test";
 
     private URL getUrl() {
         try {
@@ -43,49 +44,39 @@ public class SampleTest {
         caps.setCapability("appium:newCommandTimeout", 3600);
         caps.setCapability("appium:connectHardwareKeyboard", true);
 
-        driver = new AndroidDriver(this.getUrl(), caps);
-    }
-
-    // Вспомогательный метод для поиска элемента
-    private MobileElement findElementById(String id) {
-        return driver.findElement(By.id(id));
+        driver = new AndroidDriver<>(this.getUrl(), caps);
+        mobileObject = new MobileObject(driver); // инициализация MobileObject
     }
 
     @Test
     public void testEmptyOrSpaceInputDoesNotChangeOutput() {
-        String initialText = findElementById("ru.netology.testing.uiautomator:id/textToBeChanged").getText();
+        String initialText = mobileObject.getTextToBeChangedElement().getText();
+        mobileObject.getUserInputElement().sendKeys(EMPTY_INPUT);
+        mobileObject.getChangeButtonElement().click();
 
-        MobileElement userInputElement = findElementById("ru.netology.testing.uiautomator:id/userInput");
-        userInputElement.sendKeys(EMPTY_INPUT); // Вводим пустую строку
-
-        MobileElement changeButton = findElementById("ru.netology.testing.uiautomator:id/buttonChange");
-        changeButton.click();
-
-        String updatedText = findElementById("ru.netology.testing.uiautomator:id/textToBeChanged").getText();
+        String updatedText = mobileObject.getTextToBeChangedElement().getText();
         assertEquals(initialText, updatedText, "Текст не должен измениться при вводе пустой строки или пробелов.");
     }
 
     @Test
     public void testUserInputChangesTextInNewActivity() {
-        MobileElement userInputElement = findElementById("ru.netology.testing.uiautomator:id/userInput");
-        userInputElement.click();
-        userInputElement.sendKeys(VALID_INPUT); // Вводим корректный текст
-
-        MobileElement changeButton = findElementById("ru.netology.testing.uiautomator:id/buttonActivity");
-        changeButton.click();
+        mobileObject.getUserInputElement().click();
+        mobileObject.getUserInputElement().sendKeys(VALID_INPUT);
+        mobileObject.getButtonActivityElement().click();
 
         WebDriverWait wait = new WebDriverWait(driver, 10);
-        MobileElement resultTextElement = (MobileElement) wait.until(ExpectedConditions.visibilityOfElementLocated(By.id("ru.netology.testing.uiautomator:id/text")));
+        MobileElement resultTextElement = (MobileElement) wait.until(ExpectedConditions.visibilityOf(mobileObject.getResultTextElement())
+        );
 
-        // Получаем текст результата и проверяем его
         String resultText = resultTextElement.getText();
         assertEquals(VALID_INPUT, resultText, "Текст в новом Activity не соответствует введенному значению.");
     }
 
+
     @AfterEach
     public void tearDown() {
         if (driver != null) {
-            driver.quit(); // Завершаем сессию Appium
+            driver.quit();
         }
     }
 }
